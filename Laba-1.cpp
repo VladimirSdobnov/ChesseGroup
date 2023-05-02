@@ -55,16 +55,64 @@ protected:
 //Класс пешка
 class TPawn :public TFigure {
 private:
-    bool fitrst_move;
+    bool first_move;
 public:
-    TPawn() :fitrst_move(false) {};//конструктор по умолчанию
-    TPawn(TPawn& tmp) {};//конструктор копирования
-    ~TPawn() {};//деструктор
+    TPawn() :first_move(false) {}
+    TPawn(short int _id, TCoord _coord, TFigure_color _color) {}
+    TPawn(TPawn& tmp) {}
+    ~TPawn() {}
 
-    TCoordMass& get_list_coord() {};//возвращает список координат, куда фигура может сдвинуться, начальные координаты берет от свего обьекта.
-    bool check_move(TCoord& coord_last) {};//возвращает true если фигура может передвинуться на переданные координаты.
-    void move_to(TCoord& coord_last) {};//пердвигает фигуру на переданные координаты без проверки(просто меняет свое поле TCoord). 
+    TCoordMass& get_list_coord() {};
+    bool check_move(TCoord& coord_last) {};
+    void move_to(TCoord& coord_last) {};
 };
+TPawn::TPawn() {
+    id = -1;
+    type = pawn;
+    color = no_color;
+    coord.set_x(-1);
+    coord.set_y(-1);
+}
+TPawn::TPawn(short int _id, TCoord _coord, TFigure_color _color) {
+    type = pawn;
+    id = id;
+    coord.set_x(_coord.get_x());
+    coord.set_y(_coord.get_y());
+    color = _color;
+}
+TPawn::TPawn(TPawn& tmp) {
+    type = pawn;
+    id = tmp.id;
+    coord.set_x(tmp.coord.get_x());
+    coord.set_y(tmp.coord.get_y());
+    color = tmp.color;
+}
+void TPawn::move_to(TCoord& coord_last) {
+    coord.set_x(coord_last.get_x());
+    coord.set_y(coord_last.get_y());
+}
+bool TPawn::check_move(TCoord& coord_last) {
+    if ((abs(coord_last.get_x() - coord.get_x()) <= 1) && (abs(coord_last.get_y() - coord.get_y()) <= 1)) return true;
+    else return 0;
+};
+TCoordMass& TPawn::get_list_coord() {
+    TCoordMass mass;
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (i == 0 && j == 0) {
+                continue;
+            }
+            else {
+                int tmp_x = coord.get_x() + i, tmp_y = coord.get_y() + j;
+                if (tmp_x >= 0 && tmp_x < 8 && tmp_y >= 0 && tmp_y < 8) {
+                    mass.add_coord(tmp_x, tmp_y);
+                }
+            }
+        }
+
+    }
+    return mass;
+}
 //Класс король
 class TKing :public TFigure {
 public:
